@@ -25,7 +25,7 @@ public class Banco {
 			boolean isNomeClienteIgual = c.getCliente().getNome().equals(conta.getCliente().getNome());
 			boolean isNumeroContaIgual = c.getNumeroConta() == conta.getNumeroConta();
 
-			if (isNomeClienteIgual || isNumeroContaIgual) {
+			if (isNumeroContaIgual || isNomeClienteIgual) {
 				throw new ContaJaExistenteException();
 			}
 		}

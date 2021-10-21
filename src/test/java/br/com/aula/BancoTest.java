@@ -1,8 +1,10 @@
 package br.com.aula;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
+import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -48,6 +50,49 @@ public class BancoTest {
 	}
 
 	@Test
+	public void naoDeveCadastrarContaComNumeroInvalido() throws ContaJaExistenteException {
+
+		// Cenario
+		Cliente cliente = new Cliente("Joao");
+		Conta conta1 = new Conta(cliente, 123, 0, TipoConta.CORRENTE);
+		Banco banco = new Banco();
+
+		// Ação
+		if(conta1.getNumeroConta() >= 0) {
+			banco.cadastrarConta(conta1);
+		}
+		assertEquals(1, banco.obterContas().size());
+	}
+
+	@Test
+	public void naoDeveCadastrarContaClienteExistente() throws ContaJaExistenteException {
+
+		// Cenario
+		Cliente cliente = new Cliente("Joao");
+		Conta conta1 = new Conta(cliente, 123, 0, TipoConta.CORRENTE);
+		Cliente cliente2 = new Cliente("Joao");
+		Conta conta2 = new Conta(cliente2, 312, 0, TipoConta.CORRENTE);
+
+		Banco banco = new Banco();
+
+		// Ação
+		banco.cadastrarConta(conta1);
+		List<Conta> contas = banco.obterContas();
+		int quantidadeContasIguais = 0;
+		for (Conta c : contas) {
+			boolean isNomeClienteIgual = c.getCliente().getNome().equals(cliente2.getNome());
+			if (isNomeClienteIgual) {
+				quantidadeContasIguais = 1;
+			}
+		}
+		if(quantidadeContasIguais == 0) {
+			banco.cadastrarConta(conta2);
+		}
+		//Verificação
+		assertEquals(1, banco.obterContas().size());
+	}
+
+	@Test
 	public void deveEfetuarTransferenciaContasCorrentes() throws ContaSemSaldoException, ContaNaoExistenteException {
 
 		// Cenario
@@ -66,4 +111,6 @@ public class BancoTest {
 		assertEquals(-100, contaOrigem.getSaldo());
 		assertEquals(100, contaDestino.getSaldo());
 	}
+
+
 }
